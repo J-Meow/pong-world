@@ -1,11 +1,21 @@
 canvas {
     position: fixed;
-    left: 0;
-    top: 0;
-    width: 100vw !important;
-    height: 100vh !important;
+    left: 50vw;
+    top: 50vh;
+    aspect-ratio: 16 / 9;
+    transform: translate(-50%, -50%);
+}
+@media (max-height: calc(100vw * 9 / 16)) {
+    canvas {
+        height: 100vh;
+    }
+}
+@media (min-height: calc(100vw * 9 / 16)) {
+    canvas {
+        width: 100vw;
+    }
 }
 html {
     overflow: hidden;
-    background: black;
+    background: #222;
 }
