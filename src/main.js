@@ -33,6 +33,22 @@ skyboxMaterial.side = THREE.DoubleSide
 const skyboxMesh = new THREE.Mesh(skyboxGeometry, skyboxMaterial)
 scene.add(skyboxMesh)
 
+const pointCenter = new THREE.Vector3(0, 0, 0)
+pointCenter.unproject(camera)
+const pointCorner = new THREE.Vector3(1, 1, 0)
+pointCorner.unproject(camera)
+const paddleLeftGeo = new THREE.PlaneGeometry(
+    (pointCorner.x - pointCenter.x) * 1,
+    (pointCorner.y - pointCenter.y) * 1,
+)
+const pongCtx = document.createElement("canvas").getContext("2d")
+pongCtx.canvas.width = 3200
+pongCtx.canvas.height = 1800
+const pongTexture = new THREE.CanvasTexture(pongCtx.canvas)
+const pongMaterial = new THREE.MeshBasicMaterial({ map: pongTexture })
+const pongCanvasMesh = new THREE.Mesh(paddleLeftGeo, pongMaterial)
+scene.add(pongCanvasMesh)
+
 let newBlobTick = 0
 
 let blobs = []
@@ -62,7 +78,7 @@ function animate(time) {
             },
         )
     }
-    newBlobTick += delta
+    //newBlobTick += delta
     skyCtx.clearRect(0, 0, skyCtx.canvas.width, skyCtx.canvas.height)
     skyCtx.fillStyle = "black"
     skyCtx.fillRect(0, 0, skyCtx.canvas.width, skyCtx.canvas.height)
@@ -91,7 +107,25 @@ function animate(time) {
     skyCtx.globalAlpha = 1
     blobs = blobs.filter((x) => x.opacity > 0)
     skyTexture.needsUpdate = true
+    //camera.rotation.x = Math.sin(time / 300) * 0.2
     //camera.rotation.y = time / 1000
+    pongCanvasMesh.position.x = pointCenter.x
+    pongCanvasMesh.position.y = pointCenter.y
+    pongCanvasMesh.position.z = pointCenter.z
+    pongCtx.clearRect(0, 0, pongCtx.canvas.width, pongCtx.canvas.height)
+    pongCtx.fillStyle = "white"
+    pongCtx.fillRect(0, 0, pongCtx.canvas.width, pongCtx.canvas.height)
+    pongCtx.fillStyle = "black"
+    pongCtx.fillRect(
+        50,
+        50,
+        pongCtx.canvas.width - 100,
+        pongCtx.canvas.height - 100,
+    )
+    pongCtx.fillStyle = "white"
+    pongCtx.fillRect(100, 200, 50, 300)
+    pongCtx.fillRect(pongCtx.canvas.width - 150, 800, 50, 300)
+    pongCtx.fillRect(600, 400, 50, 50)
     renderer.render(scene, camera)
 }
 renderer.setAnimationLoop(animate)
